@@ -40,3 +40,8 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 end
+
+# These values are used for setting the authentication
+# parameters in the request headers for controller specs.
+ENV["AUTH_NAME"]     = "test_user"
+ENV["AUTH_PASSWORD"] = "test_password"
