@@ -13,6 +13,18 @@ class LocksController < ApplicationController
     end
   end
 
+  def destroy
+    resource = Resource.find_by_name(params["resource_name"])
+
+    if resource.present?
+      resource.locks.destroy_all
+
+      render nothing: true
+    else
+      render invalid_resource_error
+    end
+  end
+
   private
 
   def grant_lock_request(resource)
@@ -33,5 +45,11 @@ class LocksController < ApplicationController
     { status: 500, 
         json: { errors: object.errors.full_messages.join(",") }
     } 
+  end
+
+  def invalid_resource_error
+    { status: 404,
+        json: { errors: "Unable to find resource with name \"#{params['resource_name']}\"" }
+    }
   end
 end

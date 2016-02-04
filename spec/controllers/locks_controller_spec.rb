@@ -9,7 +9,7 @@ RSpec.describe LocksController, type: :controller do
 
   describe "create" do
     context "when the resource is available" do
-      let(:owner)   { "Prince Jason" }
+      let(:owner) { "Prince Jason" }
 
       before(:each) do
         post :create, { resource_name: "water", owner: owner }
@@ -50,6 +50,44 @@ RSpec.describe LocksController, type: :controller do
         expect(response_body["owner"]).to       eq owner
         expect(response_body["created_at"]).to  be_present
         expect(response_body["updated_at"]).to  be_present
+      end
+    end
+  end
+
+  describe "destroy" do
+    context "when the resource exists" do
+      let(:resource) { FactoryGirl.create(:resource, name: "superprocessor") }
+
+      before(:each) do
+        Lock.create!(resource_id: resource.id, owner: "RSpec Test Girl")
+
+        delete :destroy, { resource_name: resource.name }
+      end
+
+      it "responds with status 200" do
+        expect(response.status).to eq 200
+      end
+
+      it "deletes the lock associated with the resource" do
+        expect(resource.locks).to be_empty
+      end
+    end
+
+    context "when the resource does not exist" do
+      let(:resource_name) { "non-existent-resource" }
+
+      before(:each) do
+        delete :destroy, { resource_name: resource_name }
+      end
+
+      it "responds with status 404" do
+        expect(response.status).to eq 404
+      end
+
+      it "responds with the expected error JSON" do
+        response_body = JSON.parse(response.body)
+
+        expect(response_body["errors"]).to eq "Unable to find resource with name \"#{resource_name}\""
       end
     end
   end
