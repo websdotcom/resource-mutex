@@ -2,6 +2,11 @@ require "spec_helper"
 require "pp"
 
 RSpec.describe LocksController, type: :controller do
+  before(:each) do
+    request.env["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Basic
+      .encode_credentials(ENV["AUTH_NAME"], ENV["AUTH_PASSWORD"])
+  end
+
   describe "create" do
     context "when the resource is available" do
       let(:owner)   { "Prince Jason" }

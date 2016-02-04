@@ -1,9 +1,14 @@
 require "spec_helper"
 
 RSpec.describe ResourcesController, type: :controller do
+  before(:each) do
+    request.env["HTTP_AUTHORIZATION"] = ActionController::HttpAuthentication::Basic
+      .encode_credentials(ENV["AUTH_NAME"], ENV["AUTH_PASSWORD"])
+  end
+
   describe "create" do
     context "when the resource is created successfully" do
-      let(:resource_name)   { "water" }
+      let(:resource_name) { "water" }
 
       before(:each) do
         post :create, { name: resource_name }
