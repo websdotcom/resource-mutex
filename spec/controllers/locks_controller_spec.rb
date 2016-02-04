@@ -14,7 +14,7 @@ RSpec.describe LocksController, type: :controller do
         expect(response.status).to eq 200
       end
 
-      it "responds with the JSON of the lock object" do
+      it "responds with the JSON of the granted lock object" do
         response_body = JSON.parse(response.body)
 
         expect(response_body["id"]).to          be_present
@@ -30,11 +30,21 @@ RSpec.describe LocksController, type: :controller do
       before(:each) do
         Lock.create!(resource_id: resource.id, owner: owner)
 
-        post :create, { resource_name: "water", owner: owner }
+        post :create, { resource_name: resource.name, owner: owner }
       end
 
       it "responds with status 409" do
         expect(response.status).to eq 409
+      end
+
+      it "responds with the JSON of the conflicting lock object" do
+        response_body = JSON.parse(response.body)
+
+        expect(response_body["id"]).to          be_present
+        expect(response_body["resource_id"]).to eq resource.id
+        expect(response_body["owner"]).to       eq owner
+        expect(response_body["created_at"]).to  be_present
+        expect(response_body["updated_at"]).to  be_present
       end
     end
   end
