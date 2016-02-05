@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20160203195823) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "locks", force: :cascade do |t|
     t.integer  "resource_id",            null: false
     t.string   "owner",       limit: 64, null: false
@@ -20,8 +23,8 @@ ActiveRecord::Schema.define(version: 20160203195823) do
     t.datetime "updated_at"
   end
 
-  add_index "locks", ["owner"], name: "index_locks_on_owner"
-  add_index "locks", ["resource_id"], name: "index_locks_on_resource_id"
+  add_index "locks", ["owner"], name: "index_locks_on_owner", using: :btree
+  add_index "locks", ["resource_id"], name: "index_locks_on_resource_id", using: :btree
 
   create_table "resources", force: :cascade do |t|
     t.string   "name",       limit: 64, null: false
@@ -29,6 +32,6 @@ ActiveRecord::Schema.define(version: 20160203195823) do
     t.datetime "updated_at"
   end
 
-  add_index "resources", ["name"], name: "index_resources_on_name"
+  add_index "resources", ["name"], name: "index_resources_on_name", using: :btree
 
 end
